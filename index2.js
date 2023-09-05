@@ -1,22 +1,18 @@
-  class User {
+  class User { //user class that will be used when creating new users to the API
     constructor(userName, id){
     this.userName = userName
     this.id = id
     }
 }
 
-class UserService{    
+class UserService{   // Userservice class proforms all the the actions on the API 
     static url = "https://64f3c773932537f40519fc39.mockapi.io/Users/Users"
 
-    static getAllUsers() {
+    static getAllUsers() { // reads all users
         return $.get(this.url)
     }
 
-    static getUser(id){
-        return $.get(this.url + `/${id}`)
-    }
-
-    static createUser(user){
+    static createUser(user){ // function that places a created user inside the API
         return $.ajax({
             url: this.url,
             datatype: 'json',
@@ -26,7 +22,7 @@ class UserService{
         })
     }
 
-    static updateUser(user){
+    static updateUser(user){ //updates user on the API based on entered information
         return $.ajax({
             url: this.url + `/${user.id}`,
             datatype: 'json',
@@ -36,7 +32,7 @@ class UserService{
         })
     }
 
-    static deleteUser(id) {
+    static deleteUser(id) { //deletes the user from the API
         return $.ajax({
             url: this.url + `/${id}`,
             type: `DELETE`
@@ -44,14 +40,14 @@ class UserService{
     }
 }
 
-class DOMManager {
+class DOMManager { // class that holds functions that work on the DOM
     static users
 
-    static getAllUsers() {
+    static getAllUsers() { // function that reads all users from the API then renders them to the HTML via the render function
     UserService.getAllUsers().then(users => this.render(users))
     }
 
-    static createUser(userName){
+    static createUser(userName){ //creates a user based on what was entered in the input box at the top of the screen, adds another card to the HTML
         let createdId = (this.users.length + 1)
         UserService.createUser(new User(userName, createdId))
         .then(() => {
@@ -61,7 +57,7 @@ class DOMManager {
     }
 
 
-    static deleteUser(id){
+    static deleteUser(id){ // function that deletes the user based on its id, removes from HTML and API
         UserService.deleteUser(id)
         .then(() =>{
             return UserService.getAllUsers()
@@ -69,7 +65,7 @@ class DOMManager {
         .then((users) => this.render(users))
     }
 
-    static updateUser(id){
+    static updateUser(id){ //updates a users name based on what was entered into the input box, in both the HTML and the API
         for (let user of this.users){
             if (user.id == id){
                 let newUserName = $(`#${user.id}-user-name`).val()
@@ -86,7 +82,7 @@ class DOMManager {
 
 
 
-    static render(users) {
+    static render(users) { // renders all of the users names onto cards with their own update input box and delete button
         console.log(users)
         this.users = users
         $('#app').empty()
@@ -115,21 +111,10 @@ class DOMManager {
                 </div><br>
                 `
             )
-            //for (let game of users.games){
-              //  $(`#${user._id}`).find('card-body').append(
-                //    `<p>
-                   // <span id="name-${game._id}"> Name: </strong> ${game.gameName}</span>
-                  //  <span id="name-${game._id}"> Developer: </strong> ${game.developer}</span>
-                  //  <button class = "btn btn-danger" onclick="DOMManager.deleteRoom('${user._id}', ${game._id})>Delete Room </button>
-                  //  `
-               // )
             }
-
         }
-
     }
-//}
-$(`#new-user-bttn`).click(() => {
+$(`#new-user-bttn`).click(() => { // on click listener that calls the create user function from DOMManager whecn the new-user-bttn is clicked
     DOMManager.createUser($(`#new-userName-input`).val())
     $(`#new-userName-input`).val('')
 })
